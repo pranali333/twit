@@ -1,0 +1,11 @@
+.login_panel {
+    margin-top: 5% !important;
+}
+.user_info_detail {
+    background-color: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    margin-bottom: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+    border-radius: 5px;
+}
