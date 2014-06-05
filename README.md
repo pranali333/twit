@@ -15,5 +15,10 @@
   * Download **Home Timeline Tweets** in **CSV**, **XLS**
   
 ### Live Demo Link
-  (http://ec2-54-81-14-238.compute-1.amazonaws.com/twit/)
+  http://ec2-54-81-14-238.compute-1.amazonaws.com/twit/
   
+### Technologies and Libraries
+  * **Backend** : PHP
+  * **Frontend** : HTML5, CSS, jQyery, Bootstrap
+  * **API** : 
+    * Twitter Oauth (Twitter API Version 1.1)
