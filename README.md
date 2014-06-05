@@ -11,3 +11,4 @@
   * View his personal details like Name, Username, Tweets Count, Following Count, Followers Count, Joined On, Location, Profile Picture, Banner Image
   * View his recent **Home Timeline Tweets** in slider
   * View his **Followers** and search followers
+  * Download **Home Timeline Tweets** in **CSV**, **XLS**
