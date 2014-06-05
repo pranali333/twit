@@ -8,5 +8,6 @@
 
   This is a web applicaiton where user is authenticated with his twitter credentials using OAuth 2.0 and following functionalities are available to him.
 
-  * Hello
-  * HI
+  * View his personal details like Name, Username, Tweets Count, Following Count, Followers Count, Joined On, Location, Profile Picture, Banner Image
+  * View his recent **Home Timeline Tweets** in slider
+  * View his **Followers** and search followers
