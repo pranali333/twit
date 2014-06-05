@@ -1,4 +1,3 @@
-## What is it?
-====
+## Twitter-Timeline
 
-Twitter Authentication
+Display Tweets and your twitter followers, Download Tweets into various format(like CSV, XLS etc) 
