@@ -28,7 +28,19 @@ $user_details = $connection->get('users/show', array('screen_name' => $_SESSION[
 $tweets = $connection->get('statuses/home_timeline', array('screen_name' => $_SESSION['request_vars']['screen_name'], 'include_entities' => 'true', 'count' => TWEET_LIMIT));
 
 // getting logged in user's followers
-$followers = $connection->get('followers/list', array('screen_name' => $_SESSION['request_vars']['screen_name'], 'count' => FOLLOWERS_LIMIT));
+$followers = array();
+$list = "";
+$cursor = -1;
+do {
+    $list = $connection->get('followers/list', array('screen_name' => $_SESSION['request_vars']['screen_name'], 'cursor' => $cursor));
+    if (isset($list->error)) {
+        break;
+    }
+    $cursor = $list->next_cursor_str;
+    for ($n = 0; $n < sizeof($list->users); $n++) {
+        array_push($followers, $list->users[$n]);
+    }
+} while ($cursor != 0);
 ?>
 <!DOCTYPE html>
 <html>
@@ -124,6 +136,7 @@ $followers = $connection->get('followers/list', array('screen_name' => $_SESSION
                                 <option value="">Select Export Type</option>
                                 <option value="generate_tweets_csv.php">CSV</option>
                                 <option value="generate_tweets_xls.php">XLS</option>
+                                <option value="generate_tweets_pdf.php">PDF</option>
                             </select>
                             <input type="button" class="btn btn-primary input-sm" name="download" value="Download" style="padding-top: 4px;" onclick="download_tweets();" />
                         </div>
@@ -197,8 +210,9 @@ $followers = $connection->get('followers/list', array('screen_name' => $_SESSION
                         </div>
                         <div class="panel-body" id="followers_div">
                             <div class="row" id="flwers">
-                                <?php foreach ($followers->users as $followers_id) { ?>
-                                    <div class="col-lg-4 flwers_holder" id="<?php echo $followers_id->name; ?>">
+                                <?php $cnt = 1; ?>
+                                <?php foreach ($followers as $followers_id) { ?>
+                                    <div class="col-lg-4 flwers_holder" id="<?php echo $followers_id->name; ?>" <?php if ($cnt > FOLLOWERS_LIMIT) { ?>style="display: none;"<?php } ?>>
                                         <div class="panel panel-default">
                                             <div class="panel-body" style="padding:0px !important;">
                                                 <div class="media" style="padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
@@ -214,7 +228,10 @@ $followers = $connection->get('followers/list', array('screen_name' => $_SESSION
                                             </div>
                                         </div>
                                     </div>
-                                <?php } ?>
+                                    <?php
+                                    $cnt++;
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -256,12 +273,20 @@ echo $fn_obj->js('jquery/jquery-1.11.1.js,bootstrap/bootstrap.js,select2/select2
         // For follower search on keyup
         $(".search").keyup(function() {
             var str = $(".search").val();
+            var cnt = 0;
+            var fw_cnt = parseInt('<?php echo FOLLOWERS_LIMIT; ?>');
             $("#flwers .flwers_holder").each(function(index) {
                 if ($(this).attr("id")) {
                     if (!$(this).attr("id").match(new RegExp(str, "i"))) {
                         $(this).fadeOut("fast");
                     } else {
-                        $(this).fadeIn("slow");
+                        if (cnt < fw_cnt) {
+                            $(this).css('display', 'block');
+                            $(this).fadeIn("slow");
+                        } else {
+                            $(this).css('display', 'none');
+                        }
+                        cnt++;
                     }
                 }
             });
@@ -271,7 +296,7 @@ echo $fn_obj->js('jquery/jquery-1.11.1.js,bootstrap/bootstrap.js,select2/select2
 
         setInterval(function() {
             get_home_timeline_tweets('0');
-        }, 60000);
+        }, 600000);
         //set touch swipe effect
         $("#carousel-example-generic").swiperight(function() {
             $("#carousel-example-generic").carousel('prev');
@@ -283,11 +308,11 @@ echo $fn_obj->js('jquery/jquery-1.11.1.js,bootstrap/bootstrap.js,select2/select2
     });
     //download selected tweets in selected format.
     function download_tweets() {
-        $('#spinner').fadeIn('fast');
         var file_type = $('#formats').val();
         if (file_type == '') {
             alert("Please Select Export Type");
         } else {
+            $('#spinner').fadeIn('fast');
             var tweet_type = $('#tweet_type').val();
             $.ajax({
                 type: 'post',
@@ -295,6 +320,7 @@ echo $fn_obj->js('jquery/jquery-1.11.1.js,bootstrap/bootstrap.js,select2/select2
                 data: {'tweet_type': tweet_type},
                 success: function(result) {
                     document.location = 'file_download.php?filename=' + result.trim();
+                    $('#formats').select2('val', '');
                     $('#spinner').stop().fadeOut('fast');
                 }
             });
