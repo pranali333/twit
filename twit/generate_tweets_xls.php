@@ -16,6 +16,11 @@ if ($_REQUEST['tweet_type'] == 'home') {
     $tweets = $connection->get('statuses/user_timeline', array('screen_name' => $_REQUEST['tweet_type'], 'include_entities' => 'true', 'count' => TWEET_LIMIT));
 }
 
+$filepath = $_SERVER['DOCUMENT_ROOT'] . "/twit/download";
+
+if (!file_exists($filepath)) {
+    mkdir($filepath, 0777, true);
+}
 // path to save download file
 $filename = $_SERVER['DOCUMENT_ROOT'] . "/twit/download/" . $_REQUEST['tweet_type'] . "_tweets_" . time() . ".xls";
 $delimiter = "\t";

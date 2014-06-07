@@ -20,6 +20,11 @@ if ($_REQUEST['tweet_type'] == 'home') {
     $title_pdf = 'Tweets of ' . $_REQUEST['tweet_type'];
 }
 
+$filepath = $_SERVER['DOCUMENT_ROOT'] . "/twit/download";
+
+if (!file_exists($filepath)) {
+    mkdir($filepath, 0777, true);
+}
 // path to save download file
 $filename = $_SERVER['DOCUMENT_ROOT'] . "/twit/download/" . $_REQUEST['tweet_type'] . "_tweets_" . time() . ".pdf";
 
